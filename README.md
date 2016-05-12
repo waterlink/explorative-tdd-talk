@@ -298,6 +298,7 @@ Break first granular piece of knowledge:
 ...
 ```
 
+
 And run tests:
 
 ```
@@ -325,7 +326,7 @@ Great. This mutation says, that our tests are good to go. Other options:
 - replace condition with `true`
 
 
-Replacing condition with `true` does this:
+Replacing condition with `true` results in:
 
 ```
 .
@@ -342,7 +343,7 @@ Now we have to either:
 - add more tests.
 
 
-In this case adding another test cuts it:
+Adding another test does the job:
 
 ```ruby
 it "ignores records of invalid kind" do
@@ -375,6 +376,131 @@ Failures:
 Finished in 0.21531 seconds (files took 0.11582 seconds to load)
 2 examples, 1 failure
 ```
+
+
+Undo the mutation:
+
+```ruby
+(x[1][0] == "followed_notification" && x[1][2] == id.to_s) ||
+...
+```
+
+and run tests:
+
+```
+..
+
+Finished in 0.02343 seconds (files took 0.11584 seconds to load)
+2 examples, 0 failures
+```
+
+
+### Apply Mutational Testing repeatedly
+
+
+```ruby
+...
+kind = values[0]
+...
+```
+
+change to
+
+```ruby
+...
+kind = values[1]
+...
+```
+
+
+And run tests:
+
+```
+..
+
+Finished in 0.02343 seconds (files took 0.11584 seconds to load)
+2 examples, 0 failures
+```
+
+
+Another non-failing mutation, lets add test:
+
+```ruby
+it "loads followed notifications with correct kind" do
+  user = User.new(email: "john@example.org", password: "welcome")
+  Database.insert("notifications", [
+    "followed_notification", "986", user.id.to_s
+  ])
+
+  notifications = user.notifications__isolated__
+
+  expect(notifications[0][:kind]).to eq("followed_notification")
+end
+```
+
+
+And run tests:
+
+```
+..F
+
+Failures:
+
+  1) User#notifications loads followed notifications with correct kind
+     Failure/Error: expect(notifications[0][:kind]).to eq("followed_notification")
+
+     NoMethodError:
+       undefined method `[]' for nil:NilClass
+     # ./lemon_spec.rb:72:in `block (3 levels) in <top (required)>'
+
+Finished in 0.14636 seconds (files took 0.12127 seconds to load)
+3 examples, 1 failure
+```
+
+Which is what we expect!
+
+
+Undo mutation and run tests:
+
+```
+...
+
+Finished in 0.14636 seconds (files took 0.12127 seconds to load)
+3 examples, 0 failures
+```
+
+
+### Continue applying mutational testing
+
+(until you feel enough confidence)
+
+
+### Go back to step 2 and repeat
+
+(until you feel enough confidence)
+
+
+This step-by-step example can be viewed as commit history here:
+
+https://github.com/waterlink/lemon/pull/6
+
+
+
+## Bonus
+
+
+Useful when refactoring code
+
+(extract class/module/package)
+
+
+Useful when refactoring tests
+
+- verify that test suite is still correct after refactoring
+- verify that test suite is not rigid (and identify parts requiring refactoring)
+
+*(rigid = one change -> 70% tests fail)*
+
 
 
 ## Q & A

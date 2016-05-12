@@ -131,20 +131,24 @@ Knowledge change (Mutation) is a test for the test.
 
 ## Reverse TDD
 
+Technique, used to increase code coverage and understanding of the knowledge in the code.
 
-1\. Narrow scope to some manageable knowledge and isolate it (method/function/class/module)
+
+1\. Narrow scope to some manageable knowledge and isolate it
+
+*(manageable knowledge = method/function/class/module)*
 
 
 2\. Read the code and try to understand one granular piece of knowledge it is doing
 
 
-3\. Write a test to verify your assumption
+3\. Write a test to verify this assumption
 
 
-4\. Make sure it passes (by fixing your assumption, or fixing production code (bugs))
+4\. Make sure it passes (by altering the assumption, or fixing production code (bugs))
 
 
-5\. Apply Mutational Testing to each related granular piece of knowledge to verify that your understanding (and the test is correct)
+5\. Apply Mutational Testing to each related granular piece of knowledge to verify that the understanding (and the test) is correct
 
 (this may introduce more tests)
 
@@ -222,7 +226,7 @@ elsif ...
 ```
 
 
-### Step 3: Write your first test
+### Step 3: Write the first test
 
 ```ruby
 it "looks like it loads some notifications from the database" do
@@ -289,6 +293,21 @@ Finished in 0.02343 seconds (files took 0.11584 seconds to load)
 
 
 ### Step 5: Apply Mutational Testing repeatedly
+
+```ruby
+(x[1][0] == "followed_notification" && x[1][2] == id.to_s) ||
+...
+```
+
+```ruby
+if kind == "followed_notification"
+  {
+    kind: kind,
+    follower: User.find(values[1].to_i),
+    user: User.find(values[2].to_i),
+  }
+elsif ...
+```
 
 
 Break first granular piece of knowledge:
@@ -472,12 +491,12 @@ Finished in 0.14636 seconds (files took 0.12127 seconds to load)
 
 ### Continue applying mutational testing
 
-(until you feel enough confidence)
+(until there is enough confidence)
 
 
 ### Go back to step 2 and repeat
 
-(until you feel enough confidence)
+(until there is enough confidence)
 
 
 This step-by-step example can be viewed as commit history here:

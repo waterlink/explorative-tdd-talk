@@ -162,10 +162,219 @@ Knowledge change (Mutation) is a test for the test.
 6. Go back to 2
 
 
-### I want to see it in action!
 
-*(FIXME: step-by-step example should be here)*
+## I want to see it in action!
 
+*(step-by-step example)*
+
+
+### Narrow & Isolate
+
+
+Means of isolation:
+
+- Extract completely to module/class/package of its own.
+- Duplicate the code under the test and put it into function/method(s) with
+  different distinguishable name.
+
+
+#### Our scope
+
+
+![original code](original_code.png)
+
+
+### Step 1: Duplicate code to different method
+
+```ruby
+class User
+  def notifications
+    notifications = Database
+      .where("notifications") do |x|
+    ...
+  end
+
+  # full copy of User#notifications
+  def notifications__isolated__
+    notifications = Database
+      .where("notifications") do |x|
+    ...
+  end
+end
+```
+
+
+### Step 2: Read, try to understand and pick knowledge to test
+
+```ruby
+(x[1][0] == "followed_notification" && x[1][2] == id.to_s) ||
+...
+```
+
+```ruby
+if kind == "followed_notification"
+  {
+    kind: kind,
+    follower: User.find(values[1].to_i),
+    user: User.find(values[2].to_i),
+  }
+elsif ...
+```
+
+
+### Step 3: Write your first test
+
+```ruby
+it "looks like it loads some notifications from the database" do
+  user = User.new(email: "john@example.org", password: "welcome")
+  Database.insert("notifications", [
+    "followed_notification", "986", user.id.to_s]
+  )
+
+  notifications = user.notifications__isolated__
+
+  expect(notifications.count).to eq(1)
+end
+```
+
+
+### Step 4: Make sure test passes
+
+```
+F
+
+Failures:
+
+  1) User#notifications looks like it loads some notifications from the database
+     Failure/Error: user = User.new(email: "john@example.org", password: "welcome")
+
+     NoMethodError:
+       undefined method `+' for nil:NilClass
+     # ./lemon.rb:475:in `insert'
+     # ./lemon.rb:57:in `initialize'
+     # ./lemon_spec.rb:58:in `new'
+     # ./lemon_spec.rb:58:in `block (3 levels) in <top (required)>'
+
+Finished in 0.00228 seconds (files took 0.11769 seconds to load)
+1 example, 1 failure
+```
+
+
+```ruby
+module Database
+  def self.insert(table, values)
+    ...
+    # Fails with NoMethodError when there are no rows in table
+    id = table.map { |row| id = row[0] }.max + 1
+    ...
+  end
+end
+```
+
+
+Fix
+
+```ruby
+# Fall back to 1, when there are no rows in table
+id = (table.map { |row| id = row[0] }.max || 0) + 1
+```
+
+
+```
+.
+
+Finished in 0.02343 seconds (files took 0.11584 seconds to load)
+1 example, 0 failures
+```
+
+
+### Step 5: Apply Mutational Testing repeatedly
+
+
+Break first granular piece of knowledge:
+
+```ruby
+# (x[1][0] == "followed_notification" && x[1][2] == id.to_s) ||
+...
+```
+
+And run tests:
+
+```
+F
+
+Failures:
+
+  1) User#notifications looks like it loads some notifications from the database
+     Failure/Error: expect(notifications.count).to eq(1)
+
+       expected: 1
+            got: 0
+
+       (compared using ==)
+     # ./lemon_spec.rb:63:in `block (3 levels) in <top (required)>'
+
+Finished in 0.03511 seconds (files took 0.11877 seconds to load)
+1 example, 1 failure
+```
+
+
+Great. This mutation says, that our tests are good to go. Other options:
+
+- replace condition with `false`
+- replace condition with `true`
+
+
+Replacing condition with `true` does this:
+
+```
+.
+
+Finished in 0.02343 seconds (files took 0.11584 seconds to load)
+1 example, 0 failures
+```
+
+
+Now we have to either:
+
+- change our understanding if it is not what we expect, or
+- change our test to cover that, or
+- add more tests.
+
+
+In this case adding another test cuts it:
+
+```ruby
+it "ignores records of invalid kind" do
+  user = User.new(email: "john@example.org", password: "welcome")
+  Database.insert("notifications", [
+    "invalid", "986", user.id.to_s
+  ])
+
+  notifications = user.notifications__isolated__
+
+  expect(notifications.count).to eq(0)
+end
+```
+
+
+```
+.F
+
+Failures:
+
+  1) User#notifications ignores records of invalid kind
+     Failure/Error: expect(notifications.count).to eq(0)
+
+       expected: 0
+            got: 1
+
+       (compared using ==)
+     # ./lemon_spec.rb:131:in `block (3 levels) in <top (required)>'
+
+Finished in 0.21531 seconds (files took 0.11582 seconds to load)
+2 examples, 1 failure
+```
 
 
 ## Q & A

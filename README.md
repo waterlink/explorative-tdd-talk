@@ -115,6 +115,62 @@ Knowledge in the production code should be verified by test suite
 Knowledge change is an act of verification if test suite is correct (or thorough enough)
 
 
+Knowledge change (Mutation) is a test for the test.
+
+
+
+## Mutational testing
+
+
+1. Narrow scope to single granular piece of knowledge
+2. Break this knowledge (simple change, Mutation)
+3. Make sure there is a test suite failure
+4. Restore knowledge to the original state
+
+
+
+## Reverse TDD
+
+
+1\. Narrow scope to some manageable knowledge and isolate it (method/function/class/module)
+
+
+2\. Read the code and try to understand one granular piece of knowledge it is doing
+
+
+3\. Write a test to verify your assumption
+
+
+4\. Make sure it passes (by fixing your assumption, or fixing production code (bugs))
+
+
+5\. Apply Mutational Testing to each related granular piece of knowledge to verify that your understanding (and the test is correct)
+
+(this may introduce more tests)
+
+
+6\. Go back to 2
+
+
+### Recap
+
+1. Narrow scope and isolate it
+2. Read, try to understand, pick granular piece of knowledge
+3. Write a test
+4. Make sure test passes
+5. Apply Mutational Testing repeatedly
+6. Go back to 2
+
+
+### I want to see it in action!
+
+*(FIXME: step-by-step example should be here)*
+
+
+
+## Q & A
+
+
 
 ## Thank you
 

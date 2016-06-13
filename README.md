@@ -1,4 +1,4 @@
-# Reverse Test-Driven Development
+# Explorative Test-Driven Development
 
 by That TDD Fellow
 
@@ -34,12 +34,10 @@ How can one verify if specific knowledge in production code is covered by test s
 
 ### Knowledge in Production Code?
 
-
 ```ruby
+# this is a knowledge
 variable_name = some.value(from, other, source)
 ```
-
-this is the knowledge
 
 
 ```ruby
@@ -47,20 +45,17 @@ if <knowledge>
 ...
 ```
 
-
 ```ruby
 if ...
   <knowledge>
 ...
 ```
 
-
 ```ruby
 ...
 elsif <knowledge>
 ...
 ```
-
 
 ```ruby
 ...
@@ -74,6 +69,10 @@ end
 something.doAction(this, is, a, knowledge, too)
 ```
 
+```ruby
+return <knowledge>
+```
+
 
 ```ruby
 <knowledge>.each do |item|
@@ -81,16 +80,10 @@ something.doAction(this, is, a, knowledge, too)
 end
 ```
 
-
 ```ruby
 ....each do |item|
   <knowledge>
 end
-```
-
-
-```ruby
-return <knowledge>
 ```
 
 
@@ -129,7 +122,7 @@ Knowledge change (Mutation) is a test for the test.
 
 
 
-## Reverse TDD
+## Explorative TDD
 
 Technique, used to increase code coverage and understanding of the knowledge in the code.
 
@@ -522,7 +515,14 @@ Useful when refactoring tests
 
 
 
-## Q & A
+## Recap & Q & A
+
+1. Narrow scope and isolate it
+2. Read, try to understand, pick granular piece of knowledge
+3. Write a test
+4. Make sure test passes
+5. Apply Mutational Testing repeatedly
+6. Go back to 2
 
 
 

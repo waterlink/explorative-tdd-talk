@@ -6,6 +6,23 @@ Oleksii Fedorov
 
 [@waterlink000](https://twitter.com/waterlink000)
 
+Note:
+Welcome everyone, thank you for having me here. I am Oleksii Fedorov and today I am going to talk about the technique, that helps me to work with Legacy Code bases and helps me with big refactorings. It is called Explorative Test-Driven Development. Today I am going to cover the following...
+
+
+
+- Code <- Test Relationship
+- Knowledge Coverage Verification
+- Code -> Test Relationship
+- Mutational Testing Technique
+- Explorative TDD Technique
+- Example
+- Bottom Line
+
+Note:
+Code examples will be in Ruby, but the technique described today is language- and paradigm- -agnostic.
+Fell free to interrupt me and ask questions at any point. Shall we get started?
+
 
 
 ## Code <- Test Relationship
@@ -20,15 +37,23 @@ Test suite makes sure production code is correct
 Test suite enables easy refactoring
 
 
-Test suite gives courage to introduce a change (new feature, bug fix, etc.)
+Test suite gives courage to introduce a change
+
+Note:
+Such as new feature, bug fix, etc.
 
 
 Test suite is coupled to the code it tests
 
 
+Note:
+Given that information, I was always wondering if it is possible to consistently and confidently verify if knowledge in production code is well-tested. And that leads us to the next point...
+
 
 ## Verifying knowledge coverage
 
+Note:
+Just to rephrase it:
 How can one verify if specific knowledge in production code is covered by test suite?
 
 
@@ -38,6 +63,9 @@ How can one verify if specific knowledge in production code is covered by test s
 # this is a knowledge
 variable_name = some.value(from, other, source)
 ```
+
+Note:
+Wait, what is the "knowledge in code" was again?
 
 
 ```ruby
@@ -92,10 +120,11 @@ end
 
 ### Break it.
 
-
-Introduce a very small change to the knowledge. Test suite should fail.
-
+Note:
+Introduce a very small change to the knowledge. The test suite should fail.
 If it doesn't - knowledge is not covered well enough.
+Now that we know what the knowledge in production code is, let's think how this knowledge affects our test suite.
+That leads us to the next point...
 
 
 
@@ -105,10 +134,16 @@ If it doesn't - knowledge is not covered well enough.
 Knowledge in the production code should be verified by test suite
 
 
-Knowledge change is an act of verification if test suite is correct (or thorough enough)
+Knowledge change is an act of verification if test suite is correct
+
+Note:
+(or thorough enough)
 
 
-Knowledge change (Mutation) is a test for the test.
+Knowledge change is a test for the test.
+
+Note:
+Such "knowledge changes" are usually called Mutations. And that leads us to the technique called...
 
 
 
@@ -120,29 +155,38 @@ Knowledge change (Mutation) is a test for the test.
 3. Make sure there is a test suite failure
 4. Restore knowledge to the original state
 
+Note:
+I think this is a good time to have some questions...
+I always felt that it should be possible to apply Mutational Testing to support the process of understanding the Legacy Code. That is where I started to notice, how experienced engineers deal with untested code. I was able to aggregate it to the technique called Explorative Test-Driven Development...
 
 
 ## Explorative TDD
 
-Technique, used to increase code coverage and understanding of the knowledge in the code.
+The technique used to increase code coverage and understanding of the knowledge in the code.
 
 
 1\. Narrow scope to some manageable knowledge and isolate it
 
+Note:
 *(manageable knowledge = method/function/class/module)*
 
 
-2\. Read the code and try to understand one granular piece of knowledge it is doing
+2\. Read and try to understand one piece of knowledge
 
 
 3\. Write a test to verify this assumption
 
 
-4\. Make sure it passes (by altering the assumption, or fixing production code (bugs))
+4\. Make sure it passes
+
+Note:
+by altering the assumption, or fixing production code (bugs)
 
 
-5\. Apply Mutational Testing to each related granular piece of knowledge to verify that the understanding (and the test) is correct
+5\. Apply Mutational Testing repeatedly
 
+Note:
+Apply Mutational Testing to each related granular piece of knowledge to verify that the understanding (and the test) is correct
 (this may introduce more tests)
 
 
@@ -158,6 +202,9 @@ Technique, used to increase code coverage and understanding of the knowledge in 
 5. Apply Mutational Testing repeatedly
 6. Go back to 2
 
+NOTE:
+I think this is a good time to have some questions...
+I think we should go through a small example...
 
 
 ## I want to see it in action!
@@ -236,46 +283,6 @@ end
 
 
 ### Step 4: Make sure test passes
-
-```
-F
-
-Failures:
-
-  1) User#notifications looks like it loads some notifications from the database
-     Failure/Error: user = User.new(email: "john@example.org", password: "welcome")
-
-     NoMethodError:
-       undefined method `+' for nil:NilClass
-     # ./lemon.rb:475:in `insert'
-     # ./lemon.rb:57:in `initialize'
-     # ./lemon_spec.rb:58:in `new'
-     # ./lemon_spec.rb:58:in `block (3 levels) in <top (required)>'
-
-Finished in 0.00228 seconds (files took 0.11769 seconds to load)
-1 example, 1 failure
-```
-
-
-```ruby
-module Database
-  def self.insert(table, values)
-    ...
-    # Fails with NoMethodError when there are no rows in table
-    id = table.map { |row| id = row[0] }.max + 1
-    ...
-  end
-end
-```
-
-
-Fix
-
-```ruby
-# Fall back to 1, when there are no rows in table
-id = (table.map { |row| id = row[0] }.max || 0) + 1
-```
-
 
 ```
 .
@@ -358,7 +365,7 @@ Now we have to either:
 Adding another test does the job:
 
 ```ruby
-it "ignores records of invalid kind" do
+it "ignores records of an invalid kind" do
   user = User.new(email: "john@example.org", password: "welcome")
   Database.insert("notifications", [
     "invalid", "986", user.id.to_s
@@ -435,10 +442,10 @@ Finished in 0.02343 seconds (files took 0.11584 seconds to load)
 ```
 
 
-Another non-failing mutation, lets add test:
+Another non-failing mutation, let's add test:
 
 ```ruby
-it "loads followed notifications with correct kind" do
+it "loads followed notifications with a correct kind" do
   user = User.new(email: "john@example.org", password: "welcome")
   Database.insert("notifications", [
     "followed_notification", "986", user.id.to_s
@@ -497,11 +504,15 @@ This step-by-step example can be viewed as commit history here:
 https://github.com/waterlink/lemon/pull/6
 
 
+Note:
+This concludes our example and I think it is time for questions...
+With that done, we should see, if that technique can be used outside of the context of Legacy Code...
 
-## Bonus
+
+## Outside of the context of Legacy Code
 
 
-Useful when refactoring code
+Useful during big refactorings
 
 (extract class/module/package)
 
@@ -513,6 +524,8 @@ Useful when refactoring tests
 
 *(rigid = one change -> 70% tests fail)*
 
+Note:
+Let's recap the technique itself and draw a bottom line.
 
 
 ## Recap & Q & A
@@ -524,6 +537,8 @@ Useful when refactoring tests
 5. Apply Mutational Testing repeatedly
 6. Go back to 2
 
+Note:
+It is time for questions now.
 
 
 ## Thank you

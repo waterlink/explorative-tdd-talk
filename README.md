@@ -50,6 +50,7 @@ Note:
 Given that information, I was always wondering if it is possible to consistently and confidently verify if knowledge in production code is well-tested. And that leads us to the next point...
 
 
+
 ## Verifying knowledge coverage
 
 Note:
@@ -160,6 +161,7 @@ I think this is a good time to have some questions...
 I always felt that it should be possible to apply Mutational Testing to support the process of understanding the Legacy Code. That is where I started to notice, how experienced engineers deal with untested code. I was able to aggregate it to the technique called Explorative Test-Driven Development...
 
 
+
 ## Explorative TDD
 
 The technique used to increase code coverage and understanding of the knowledge in the code.
@@ -205,6 +207,7 @@ Apply Mutational Testing to each related granular piece of knowledge to verify t
 NOTE:
 I think this is a good time to have some questions...
 I think we should go through a small example...
+
 
 
 ## I want to see it in action!
@@ -503,10 +506,10 @@ This step-by-step example can be viewed as commit history here:
 
 https://github.com/waterlink/lemon/pull/6
 
-
 Note:
 This concludes our example and I think it is time for questions...
 With that done, we should see, if that technique can be used outside of the context of Legacy Code...
+
 
 
 ## Outside of the context of Legacy Code
@@ -528,6 +531,7 @@ Note:
 Let's recap the technique itself and draw a bottom line.
 
 
+
 ## Recap & Q & A
 
 1. Narrow scope and isolate it
@@ -539,6 +543,7 @@ Let's recap the technique itself and draw a bottom line.
 
 Note:
 It is time for questions now.
+
 
 
 ## Thank you

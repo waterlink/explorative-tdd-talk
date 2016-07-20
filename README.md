@@ -1,23 +1,27 @@
 # Explorative Test-Driven Development
 
-by That TDD Fellow
+Note:
+Welcome everyone, thank you for having me here. I am Oleksii Fedorov and today I am going to talk about the technique, that helps me to work with Legacy Code bases and helps me with big refactorings. It is called Explorative Test-Driven Development.
 
-Oleksii Fedorov
+
+
+<img src="../my-presentation-template/me.jpeg" class="photo-me">
+
+## Oleksii Fedorov
+
+Software Craftsperson
+
+@ Pivotal Labs - Berlin
 
 [@waterlink000](https://twitter.com/waterlink000)
 
-Note:
-Welcome everyone, thank you for having me here. I am Oleksii Fedorov and today I am going to talk about the technique, that helps me to work with Legacy Code bases and helps me with big refactorings. It is called Explorative Test-Driven Development. Today I am going to cover the following...
 
 
+## Explorative TDD
 
-- Code <- Test Relationship
-- Knowledge Coverage Verification
-- Code -> Test Relationship
-- Mutational Testing Technique
-- Explorative TDD Technique
-- Example
-- Bottom Line
+- Confidently increase code coverage
+- Increase understanding of the code in predictable manner
+- Test your tests
 
 Note:
 Code examples will be in Ruby, but the technique described today is language- and paradigm- -agnostic.
@@ -25,40 +29,7 @@ Fell free to interrupt me and ask questions at any point. Shall we get started?
 
 
 
-## Code <- Test Relationship
-
-
-Production code is the most important part
-
-
-Test suite makes sure production code is correct
-
-
-Test suite enables easy refactoring
-
-
-Test suite gives courage to introduce a change
-
-Note:
-Such as new feature, bug fix, etc.
-
-
-Test suite is coupled to the code it tests
-
-
-Note:
-Given that information, I was always wondering if it is possible to consistently and confidently verify if knowledge in production code is well-tested. And that leads us to the next point...
-
-
-
-## Verifying knowledge coverage
-
-Note:
-Just to rephrase it:
-How can one verify if specific knowledge in production code is covered by test suite?
-
-
-### Knowledge in Production Code?
+### Knowledge in Production Code
 
 ```ruby
 # this is a knowledge
@@ -116,7 +87,28 @@ end
 ```
 
 
-### Got it. How to verify it?
+
+## Code and Test Suite Relationship
+
+
+- Production code is the most important part
+- Test suite makes sure production code is correct
+- Test suite enables easy refactoring
+- Test suite gives courage to introduce a change (new feature, bug fix, etc.)
+- Test suite is coupled to the code it tests
+
+
+- Knowledge in the production code should be verified by test suite
+- Knowledge change in code should lead to a test failure
+- Knowledge change is a test for the test.
+
+
+
+## Verifying knowledge coverage
+
+Note:
+Just to rephrase it:
+How can one verify if specific knowledge in production code is covered by test suite?
 
 
 ### Break it.
@@ -124,27 +116,11 @@ end
 Note:
 Introduce a very small change to the knowledge. The test suite should fail.
 If it doesn't - knowledge is not covered well enough.
-Now that we know what the knowledge in production code is, let's think how this knowledge affects our test suite.
-That leads us to the next point...
 
-
-
-## Code -> Test Relationship
-
-
-Knowledge in the production code should be verified by test suite
-
-
-Knowledge change is an act of verification if test suite is correct
+### Mutations
 
 Note:
-(or thorough enough)
-
-
-Knowledge change is a test for the test.
-
-Note:
-Such "knowledge changes" are usually called Mutations. And that leads us to the technique called...
+Such knowledge changes are often called mutations. And that leads us to the technique called...
 
 
 

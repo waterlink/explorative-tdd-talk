@@ -19,17 +19,17 @@ Software Craftsperson
 
 ## Explorative TDD
 
-- Confidently increase code coverage
+- Confidently increase test coverage
 - Increase understanding of the code in predictable manner
-- Test your tests
+- Test and test-drive your tests
 
 Note:
 Code examples will be in Ruby, but the technique described today is language- and paradigm- -agnostic.
-Fell free to interrupt me and ask questions at any point. Shall we get started?
+Feel free to interrupt me and ask questions at any point. Shall we get started?
 
 
 
-### Knowledge in Production Code
+### Knowledge in Code
 
 ```ruby
 # this is a knowledge
@@ -88,6 +88,40 @@ end
 
 
 
+## Mutation
+
+Mutation - granular change of knowledge, that changes behavior of the system.
+
+
+### Example
+
+```ruby
+if cell_is_alive
+  # .. do this ..
+else
+  # .. do that ..
+end
+```
+
+
+Changing `if` condition to always be `true`:
+
+```ruby
+if true
+  # .. do this ..
+else
+  # .. do that ..
+end
+```
+
+
+- Changing `if` condition to always be `false`,
+- Inverting `if` condition: `if !cell_is_alive`
+- Commenting out `if` body
+- Commenting out `else` body
+
+
+
 ## Code and Test Suite Relationship
 
 
@@ -113,14 +147,11 @@ How can one verify if specific knowledge in production code is covered by test s
 
 ### Break it.
 
+Introduce a mutation.
+
 Note:
 Introduce a very small change to the knowledge. The test suite should fail.
 If it doesn't - knowledge is not covered well enough.
-
-### Mutations
-
-Note:
-Such knowledge changes are often called mutations. And that leads us to the technique called...
 
 
 
@@ -135,6 +166,85 @@ Such knowledge changes are often called mutations. And that leads us to the tech
 Note:
 I think this is a good time to have some questions...
 I always felt that it should be possible to apply Mutational Testing to support the process of understanding the Legacy Code. That is where I started to notice, how experienced engineers deal with untested code. I was able to aggregate it to the technique called Explorative Test-Driven Development...
+
+
+### Example
+
+1\. Narrow scope:
+
+```ruby
+if cell_is_alive
+  # .. do this ..
+else
+  # .. do that ..
+end
+```
+
+
+2\. Break this knowledge
+
+```ruby
+if true
+  # .. do this ..
+else
+  # .. do that ..
+end
+```
+
+
+3\. Make sure there is a test failure
+
+```
+$ rake test
+....
+
+Finished in 0.02343 seconds (files took 0.11584 seconds to load)
+4 examples, 0 failures
+```
+
+
+By adding new test:
+
+```ruby
+context "when cell is not alive" do
+  it "does that" do
+    cell_is_alive = false
+    expect(subject).to do_that
+  end
+end
+```
+
+*do_that is a custom matcher*
+
+
+And run the test again:
+
+```
+$ rake test
+....F
+
+Finished in 0.02343 seconds (files took 0.11584 seconds to load)
+5 examples, 1 failure
+```
+
+
+4\. Restore the knowledge to the original state
+
+```ruby
+if cell_is_alive
+  # ...
+```
+
+
+and make sure the tests pass:
+
+```
+$ rake test
+.....
+
+Finished in 0.02343 seconds (files took 0.11584 seconds to load)
+5 examples, 0 failures
+```
 
 
 

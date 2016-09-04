@@ -34,12 +34,11 @@ Feel free to interrupt me and ask questions at any point. Shall we get started?
 1. Knowledge in Code
 2. Mutation
 3. Code <-> Test Relationship
-4. Knowledge Test Coverage (Semantic Stability)
+4. Knowledge Test Coverage
 5. Mutational Testing
 6. Explorative TDD
 7. Step-by-step Example
 8. Outside of Legacy Code
-9. Recap & Q & A
 
 
 
@@ -163,7 +162,6 @@ end
   <li>Explorative TDD</li>
   <li>Step-by-step Example</li>
   <li>Outside of Legacy Code</li>
-  <li>Recap & Q & A</li>
 </ul>
 
 
@@ -340,7 +338,6 @@ I think we should go through a small example...
   <li class="done">Explorative TDD</li>
   <li class="next">Step-by-step Example</li>
   <li>Outside of Legacy Code</li>
-  <li>Recap & Q & A</li>
 </ul>
 
 

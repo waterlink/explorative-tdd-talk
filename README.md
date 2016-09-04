@@ -11,7 +11,7 @@ Welcome everyone, thank you for having me here. I am Oleksii Fedorov and today I
 
 Software Craftsperson
 
-@ Pivotal Labs - Berlin
+Software Engineer @ Pivotal Labs
 
 [@waterlink000](https://twitter.com/waterlink000)
 
@@ -26,6 +26,20 @@ Software Craftsperson
 Note:
 Code examples will be in Ruby, but the technique described today is language- and paradigm- -agnostic.
 Feel free to interrupt me and ask questions at any point. Shall we get started?
+
+
+
+## Agenda
+
+1. Knowledge in Code
+2. Mutation
+3. Code <-> Test Relationship
+4. Knowledge Test Coverage (Semantic Stability)
+5. Mutational Testing
+6. Explorative TDD
+7. Step-by-step Example
+8. Outside of Legacy Code
+9. Recap & Q & A
 
 
 
@@ -138,6 +152,22 @@ end
 
 
 
+## Agenda
+
+<ol>
+  <li class="done">Knowledge in Code</li>
+  <li class="done">Mutation</li>
+  <li class="done">Code <-> Test Relationship</li>
+  <li class="next">Knowledge Test Coverage</li>
+  <li>Mutational Testing</li>
+  <li>Explorative TDD</li>
+  <li>Step-by-step Example</li>
+  <li>Outside of Legacy Code</li>
+  <li>Recap & Q & A</li>
+</ul>
+
+
+
 ## Verifying knowledge coverage
 
 Note:
@@ -152,6 +182,9 @@ Introduce a mutation.
 Note:
 Introduce a very small change to the knowledge. The test suite should fail.
 If it doesn't - knowledge is not covered well enough.
+
+
+### Semantic Test Stability
 
 
 
@@ -293,6 +326,22 @@ Apply Mutational Testing to each related granular piece of knowledge to verify t
 NOTE:
 I think this is a good time to have some questions...
 I think we should go through a small example...
+
+
+
+## Agenda
+
+<ol>
+  <li class="done">Knowledge in Code</li>
+  <li class="done">Mutation</li>
+  <li class="done">Code <-> Test Relationship</li>
+  <li class="done">Knowledge Test Coverage</li>
+  <li class="done">Mutational Testing</li>
+  <li class="done">Explorative TDD</li>
+  <li class="next">Step-by-step Example</li>
+  <li>Outside of Legacy Code</li>
+  <li>Recap & Q & A</li>
+</ul>
 
 
 

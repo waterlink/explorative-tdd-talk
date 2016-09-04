@@ -16,6 +16,33 @@
 
 		<link rel="stylesheet" href="../my-presentation-template/index.css">
 
+		<style>
+			li.done {
+				font-weight: bold;
+				color: green;
+				list-style: none;
+			}
+
+		  li.done::before {
+				content: "\02713";
+				position: absolute;
+				margin-left: -40px;
+				font-weight: 100;
+		  }
+
+			li.next {
+				font-weight: bold;
+				list-style: none;
+			}
+
+			li.next::before {
+				content: "\02192";
+				position: absolute;
+				margin-left: -40px;
+				font-weight: 100;
+			}
+		</style>
+
     <script src="../my-presentation-template/js/print.js"></script>
 
 		<!--[if lt IE 9]>
@@ -28,11 +55,12 @@
     <div class="reveal">
       <div class="slides">
         <section data-markdown="README.md" data-separator="^\n\n\n" data-separator-vertical="^\n\n" data-separator-notes="^Note:"></section>
-
-        <!-- <div class="brand">
-          <a href="http://tddfellow.com">tddfellow.com</a>
-        </div> -->
       </div>
+
+			<div class="brand">
+				<img src="../my-presentation-template/logo.png" class="logo">
+				<a href="http://tddfellow.com">tddfellow.com</a>
+			</div>
     </div>
 
 		<script src="../my-presentation-template/lib/js/head.min.js"></script>

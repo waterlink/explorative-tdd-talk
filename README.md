@@ -11,13 +11,18 @@ Welcome everyone, thank you for having me here. I am Oleksii Fedorov and today I
 
 Software Craftsperson
 
-Software Engineer @ Pivotal Labs
-
 [@waterlink000](https://twitter.com/waterlink000)
 
 
 
-## Explorative TDD
+<img src="pivotal.png" class="pivotal-logo">
+
+Note:
+I work as a Software Engineer @ Pivotal Labs.
+
+
+
+## How to Eliminate Fear of Changing Legacy Code
 
 - Confidently increase test coverage
 - Increase understanding of the code in predictable manner
@@ -57,7 +62,7 @@ Wait, what is the "knowledge in code" was again?
 if <knowledge>
 ...
 ```
-
+80
 ```ruby
 if ...
   <knowledge>

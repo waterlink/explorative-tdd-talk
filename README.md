@@ -1,7 +1,7 @@
 # Explorative Test-Driven Development
 
 Note:
-Welcome everyone, thank you for having me here. I am Oleksii Fedorov and today I am going to talk about the technique, that helps me to work with Legacy Code bases and helps me with big refactorings. It is called Explorative Test-Driven Development.
+Welcome everyone, thank you for having me here.
 
 
 
@@ -13,6 +13,9 @@ Software Craftsperson
 
 [@waterlink000](https://twitter.com/waterlink000)
 
+Note:
+My name is Oleksii Fedorov. I am a Software Craftsperson and this is my twitter handle.
+
 
 
 <img src="pivotal.png" class="pivotal-logo">
@@ -22,15 +25,14 @@ I work as a Software Engineer @ Pivotal Labs.
 
 
 
-## How to Eliminate Fear of Changing Legacy Code
+## Eliminate Fear of Changing Legacy Code
 
-- Confidently increase test coverage
-- Increase understanding of the code in predictable manner
-- Test and test-drive your tests
+- Increase test coverage
+- Increase understanding of the code
+- Test-drive your tests
 
 Note:
-Code examples will be in Ruby, but the technique described today is language- and paradigm- -agnostic.
-Feel free to interrupt me and ask questions at any point. Shall we get started?
+Today you will learn how to eliminate fear of changing legacy code. You will learn how to confidently and iteratively understand legacy code better and increase test coverage in the process. While code examples will be in Ruby, the technique is language-agnostic. Shall we get the ball rolling?
 
 
 
@@ -62,7 +64,7 @@ Wait, what is the "knowledge in code" was again?
 if <knowledge>
 ...
 ```
-80
+
 ```ruby
 if ...
   <knowledge>

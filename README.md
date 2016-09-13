@@ -51,60 +51,193 @@ Today you will learn how to eliminate fear of changing legacy code. You will lea
 
 ### Knowledge in Code
 
-```ruby
-# this is a knowledge
-variable_name = some.value(from, other, source)
-```
+
+<div class="presented-code">
+some_var = some.value(from, other, source)
+if some_var.predicate?
+  something.do_action(some, arguments, here)
+elsif some_var == SPECIAL_VALUE
+  return UNKNOWN
+else
+  some_var.split(",").each do |item|
+    collaborator.send_item(item)
+  end
+end
+</div>
+
+
+<div class="presented-code presented-code--with-highlights">
+<span class="presented-code__highlight">some_var = some.value(from, other, source)</span>
+if some_var.predicate?
+  something.do_action(some, arguments, here)
+elsif some_var == SPECIAL_VALUE
+  return UNKNOWN
+else
+  some_var.split(",").each do |item|
+    collaborator.send_item(item)
+  end
+end
+</div>
+
+
+<div class="presented-code presented-code--with-highlights">
+some_var = some.value(from, other, source)
+if <span class="presented-code__highlight">some_var.predicate?</span>
+  something.do_action(some, arguments, here)
+elsif some_var == SPECIAL_VALUE
+  return UNKNOWN
+else
+  some_var.split(",").each do |item|
+    collaborator.send_item(item)
+  end
+end
+</div>
+
+
+<div class="presented-code presented-code--with-highlights">
+some_var = some.value(from, other, source)
+if some_var.predicate?
+  <span class="presented-code__highlight">something.do_action(some, arguments, here)</span>
+elsif some_var == SPECIAL_VALUE
+  return UNKNOWN
+else
+  some_var.split(",").each do |item|
+    collaborator.send_item(item)
+  end
+end
+</div>
+
+
+<div class="presented-code presented-code--with-highlights">
+some_var = some.value(from, other, source)
+if some_var.predicate?
+  something.do_action(<span class="presented-code__highlight">some, arguments, here</span>)
+elsif some_var == SPECIAL_VALUE
+  return UNKNOWN
+else
+  some_var.split(",").each do |item|
+    collaborator.send_item(item)
+  end
+end
+</div>
+
+
+<div class="presented-code presented-code--with-highlights">
+some_var = some.value(from, other, source)
+if some_var.predicate?
+  something.do_action(some, arguments, here)
+elsif <span class="presented-code__highlight">some_var == SPECIAL_VALUE</span>
+  return UNKNOWN
+else
+  some_var.split(",").each do |item|
+    collaborator.send_item(item)
+  end
+end
+</div>
+
+
+<div class="presented-code presented-code--with-highlights">
+some_var = some.value(from, other, source)
+if some_var.predicate?
+  something.do_action(some, arguments, here)
+elsif some_var == <span class="presented-code__highlight">SPECIAL_VALUE</span>
+  return UNKNOWN
+else
+  some_var.split(",").each do |item|
+    collaborator.send_item(item)
+  end
+end
+</div>
+
+
+<div class="presented-code presented-code--with-highlights">
+some_var = some.value(from, other, source)
+if some_var.predicate?
+  something.do_action(some, arguments, here)
+elsif some_var == SPECIAL_VALUE
+  <span class="presented-code__highlight">return UNKNOWN</span>
+else
+  some_var.split(",").each do |item|
+    collaborator.send_item(item)
+  end
+end
+</div>
+
+
+<div class="presented-code presented-code--with-highlights">
+some_var = some.value(from, other, source)
+if some_var.predicate?
+  something.do_action(some, arguments, here)
+elsif some_var == SPECIAL_VALUE
+  <span class="presented-code__highlight">return</span> UNKNOWN
+else
+  some_var.split(",").each do |item|
+    collaborator.send_item(item)
+  end
+end
+</div>
+
+
+<div class="presented-code presented-code--with-highlights">
+some_var = some.value(from, other, source)
+if some_var.predicate?
+  something.do_action(some, arguments, here)
+elsif some_var == SPECIAL_VALUE
+  return <span class="presented-code__highlight">UNKNOWN</span>
+else
+  some_var.split(",").each do |item|
+    collaborator.send_item(item)
+  end
+end
+</div>
+
+
+<div class="presented-code presented-code--with-highlights">
+some_var = some.value(from, other, source)
+if some_var.predicate?
+  something.do_action(some, arguments, here)
+elsif some_var == SPECIAL_VALUE
+  return UNKNOWN
+else
+  <span class="presented-code__highlight">some_var.split(",").each do |item|
+    collaborator.send_item(item)
+  end</span>
+end
+</div>
+
+
+<div class="presented-code presented-code--with-highlights">
+some_var = some.value(from, other, source)
+if some_var.predicate?
+  something.do_action(some, arguments, here)
+elsif some_var == SPECIAL_VALUE
+  return UNKNOWN
+else
+  <span class="presented-code__highlight">some_var.split(",")</span>.each do <span class="presented-code__highlight">|item|</span>
+    collaborator.send_item(item)
+  end
+end
+</div>
+
+
+<div class="presented-code presented-code--with-highlights">
+some_var = some.value(from, other, source)
+if some_var.predicate?
+  something.do_action(some, arguments, here)
+elsif some_var == SPECIAL_VALUE
+  return UNKNOWN
+else
+  some_var.split(",").each do |item|
+    <span class="presented-code__highlight">collaborator.send_item(item)</span>
+  end
+end
+</div>
+
+
+## And so on.
 
 Note:
-Wait, what is the "knowledge in code" was again?
-
-
-```ruby
-if <knowledge>
-...
-```
-
-```ruby
-if ...
-  <knowledge>
-...
-```
-
-```ruby
-...
-elsif <knowledge>
-...
-```
-
-```ruby
-...
-else
-  <knowledge>
-end
-```
-
-
-```ruby
-something.doAction(this, is, a, knowledge, too)
-```
-
-```ruby
-return <knowledge>
-```
-
-
-```ruby
-<knowledge>.each do |item|
-  ...
-end
-```
-
-```ruby
-....each do |item|
-  <knowledge>
-end
-```
+I think you get the idea.
 
 
 

@@ -1,0 +1,24 @@
+.reveal .presented-code {
+  white-space: pre;
+
+  display: block;
+  position: absolute;
+  left: -2em;
+  width: 1200px;
+  zoom: 0.95;
+  text-align: left;
+  font-family: monospace;
+  word-wrap: break-word;
+  font-size: 1.1em;
+  margin-top: -3em;
+  line-height: 1.3em;
+}
+
+.reveal .presented-code.presented-code--with-highlights {
+  color: #909090;
+}
+
+.reveal .presented-code.presented-code--with-highlights .presented-code__highlight {
+  color: darkgreen;
+  font-weight: bold;
+}

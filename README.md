@@ -320,16 +320,27 @@ Commenting out `else` body
 ## Code and Test Suite Relationship
 
 
-- Production code is the most important part
-- Test suite makes sure production code is correct
-- Test suite enables easy refactoring
-- Test suite gives courage to introduce a change (new feature, bug fix, etc.)
-- Test suite is coupled to the code it tests
+### What is Test Suite for Production Code?
 
 
-- Knowledge in the production code should be verified by test suite
-- Knowledge change in code should lead to a test failure
-- Knowledge change is a test for the test.
+- Makes sure Code is correct
+- Enables refactoring
+- Gives courage to introduce change
+- Coupled to Code
+
+
+### What is Production Code for Test Suite?
+
+
+- Knowledge should be verified by Test Suite
+- Mutation should lead to a Test failure
+
+
+### Knowledge Change
+
+### ==
+
+### Test for the Test
 
 
 

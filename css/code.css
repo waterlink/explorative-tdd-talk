@@ -22,3 +22,8 @@
   color: darkgreen;
   font-weight: bold;
 }
+
+.reveal .presented-code.presented-code--with-highlights .presented-code__highlight.mutant + .presented-code__highlight {
+  text-decoration: line-through;
+  color: darkred;
+}

@@ -248,30 +248,72 @@ Mutation - granular change of knowledge, that changes behavior of the system.
 
 ### Example
 
-```ruby
+
+<div class="presented-code">
 if cell_is_alive
-  # .. do this ..
+  do_this
 else
-  # .. do that ..
+  do_some_other_thing
 end
-```
+</div>
 
 
-Changing `if` condition to always be `true`:
-
-```ruby
-if true
-  # .. do this ..
+<div class="presented-code presented-code--with-highlights">
+if <span class="presented-code__highlight">cell_is_alive</span>
+  do_this
 else
-  # .. do that ..
+  do_some_other_thing
 end
-```
+</div>
 
 
-- Changing `if` condition to always be `false`,
-- Inverting `if` condition: `if !cell_is_alive`
-- Commenting out `if` body
-- Commenting out `else` body
+<div class="presented-code presented-code--with-highlights">
+if <span class="presented-code__highlight mutant">true</span> <span class="presented-code__highlight">cell_is_alive</span>
+  do_this
+else
+  do_some_other_thing
+end
+</div>
+
+
+<div class="presented-code presented-code--with-highlights">
+if <span class="presented-code__highlight mutant">false</span> <span class="presented-code__highlight">condition</span>
+</div>
+
+Note:
+Other available mutations here: Changing `if` condition to always be `false`.
+
+
+<div class="presented-code presented-code--with-highlights">
+if <span class="presented-code__highlight mutant">!condition</span> <span class="presented-code__highlight">condition</span>
+</div>
+
+Note:
+Inverting `if` condition.
+
+
+<div class="presented-code presented-code--with-highlights">
+if condition
+  <span class="presented-code__highlight mutant"># if_body</span>
+  <span class="presented-code__highlight">if_body</span>
+else ...
+</div>
+
+Note:
+Commenting out `if` body
+
+
+<div class="presented-code presented-code--with-highlights">
+if condition
+  if_body
+else
+  <span class="presented-code__highlight mutant"># else_body</span>
+  <span class="presented-code__highlight">else_body</span>
+end
+</div>
+
+Note:
+Commenting out `else` body
 
 
 

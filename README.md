@@ -32,7 +32,20 @@ I work as a Software Engineer @ Pivotal Labs.
 - Test-drive your tests
 
 Note:
-Today you will learn how to eliminate fear of changing legacy code. You will learn how to confidently and iteratively understand legacy code better and increase test coverage in the process. While code examples will be in Ruby, the technique is language-agnostic. Shall we get the ball rolling?
+Today you will learn how to eliminate fear of changing legacy code. You will learn how to confidently and iteratively understand legacy code better and increase test coverage in the process. While code examples will be in Ruby, the technique is language-agnostic.
+
+
+
+## Legacy Code
+
+- Hard to understand
+- No tests
+- Brings value
+
+Note:
+For the purposes of this talk I need to define what Legacy Code means. It is hard to understand. It has no tests or almost no tests and it brings value to the business and customers.
+
+Let's take a look at what we will be going through today:
 
 
 
@@ -41,11 +54,14 @@ Today you will learn how to eliminate fear of changing legacy code. You will lea
 1. Knowledge in Code
 2. Mutation
 3. Code <-> Test Relationship
-4. Knowledge Test Coverage
+4. Most Useful Coverage Metric
 5. Mutational Testing
 6. Explorative TDD
 7. Step-by-step Example
 8. Outside of Legacy Code
+
+Note:
+We will define what Knowledge in the ProdCode and Mutation means. We will take a look at the relationship of the ProdCode and TestSuite. Then we will see what is the most useful coverage metric is. Then we will explore Mutational Testing and Explorative TDD techniques. And we will go through the example. Shall we get started?
 
 
 
@@ -237,7 +253,7 @@ end
 ## And so on.
 
 Note:
-I think you get the idea.
+I think you get the idea. And if we change small piece of knowledge, we are introducing...
 
 
 
@@ -256,6 +272,11 @@ else
   do_some_other_thing
 end
 </div>
+
+Note:
+..Explain what this code does..
+
+So let's pick a first bit of knowledge here:
 
 
 <div class="presented-code presented-code--with-highlights">
@@ -320,7 +341,7 @@ Commenting out `else` body
 ## Code and Test Suite Relationship
 
 
-### What is Test Suite for Production Code?
+### How does Test Suite affect Production Code?
 
 
 - Makes sure Code is correct
@@ -329,7 +350,7 @@ Commenting out `else` body
 - Coupled to Code
 
 
-### What is Production Code for Test Suite?
+### How Does Production Code affect Test Suite?
 
 
 - Knowledge should be verified by Test Suite
@@ -350,20 +371,22 @@ Commenting out `else` body
   <li class="done">Knowledge in Code</li>
   <li class="done">Mutation</li>
   <li class="done">Code <-> Test Relationship</li>
-  <li class="next">Knowledge Test Coverage</li>
+  <li class="next">Most Useful Coverage Metric</li>
   <li>Mutational Testing</li>
   <li>Explorative TDD</li>
   <li>Step-by-step Example</li>
   <li>Outside of Legacy Code</li>
 </ul>
 
-
-
-## Verifying knowledge coverage
-
 Note:
-Just to rephrase it:
-How can one verify if specific knowledge in production code is covered by test suite?
+..Great point to stop, give audience chance to ask questions and drink some water..
+
+
+
+## Knowledge Coverage
+
+
+### How to check if knowledge is covered?
 
 
 ### Break it.
@@ -372,10 +395,13 @@ Introduce a mutation.
 
 Note:
 Introduce a very small change to the knowledge. The test suite should fail.
-If it doesn't - knowledge is not covered well enough.
+If it doesn't - knowledge is not covered well enough. And that leads us to the term called...
 
 
 ### Semantic Test Stability
+
+Note:
+Semantic Test Stability. Test Suite can be considered semantically stable if for any mutation to any bit of knowledge it tests there is a failing test. There are techniques that allow us to keep this metric up high. One of them is...
 
 
 
@@ -388,87 +414,124 @@ If it doesn't - knowledge is not covered well enough.
 4. Restore knowledge to the original state
 
 Note:
-I think this is a good time to have some questions...
-I always felt that it should be possible to apply Mutational Testing to support the process of understanding the Legacy Code. That is where I started to notice, how experienced engineers deal with untested code. I was able to aggregate it to the technique called Explorative Test-Driven Development...
+Let's see it in action.
 
 
 ### Example
 
-1\. Narrow scope:
 
-```ruby
+<div class="presented-code">
 if cell_is_alive
-  # .. do this ..
+  do_this
 else
-  # .. do that ..
+  do_some_other_thing
 end
-```
+</div>
+
+Note:
+First, we need to narrow our scope to a single bit of knowledge.
 
 
-2\. Break this knowledge
-
-```ruby
-if true
-  # .. do this ..
+<div class="presented-code presented-code--with-highlights">
+if <span class="presented-code__highlight">cell_is_alive</span>
+  do_this
 else
-  # .. do that ..
+  do_some_other_thing
 end
-```
+</div>
+
+Note:
+Second, we need to introduce a mutation:
 
 
-3\. Make sure there is a test failure
+<div class="presented-code presented-code--with-highlights">
+if <span class="presented-code__highlight mutant">true</span> <span class="presented-code__highlight">cell_is_alive</span>
+  do_this
+else
+  do_some_other_thing
+end
+</div>
 
-```
+Note:
+Third, we need to make sure there is a test failure:
+
+
+<div class="presented-code">
 $ rake test
 ....
 
 Finished in 0.02343 seconds (files took 0.11584 seconds to load)
 4 examples, 0 failures
-```
+</div>
+
+Note:
+Oh no, it didn't fail, so we have a "failing test" for our test suite. In this case we need to add the test for the negative case:
 
 
-By adding new test:
-
-```ruby
-context "when cell is not alive" do
-  it "does that" do
-    cell_is_alive = false
-    expect(subject).to do_that
-  end
-end
-```
-
-*do_that is a custom matcher*
+<div class="presented-code presented-code--with-highlights">
+<span class="presented-code__highlight">cell_is_alive = false</span>
+expect(did_some_other_thing).to eq(true)
+</div>
 
 
-And run the test again:
+<div class="presented-code presented-code--with-highlights">
+cell_is_alive = false
+expect(<span class="presented-code__highlight">did_some_other_thing</span>).to eq(true)
+</div>
 
-```
+
+<div class="presented-code presented-code--with-highlights">
+cell_is_alive = false
+expect(<span class="presented-code__highlight">did_some_other_thing</span>).to eq(<span class="presented-code__highlight alternative">true</span>)
+</div>
+
+
+<div class="presented-code">
 $ rake test
 ....F
 
 Finished in 0.02343 seconds (files took 0.11584 seconds to load)
 5 examples, 1 failure
-```
+</div>
 
 
-4\. Restore the knowledge to the original state
+<div class="presented-code presented-code--with-highlights">
+if <span class="presented-code__highlight">true</span>
+  do_this
+else
+  do_some_other_thing
+end
+</div>
 
-```ruby
+
+<div class="presented-code presented-code--with-highlights">
+if <span class="presented-code__highlight mutant">cell_is_alive</span> <span class="presented-code__highlight">true</span>
+  do_this
+else
+  do_some_other_thing
+end
+</div>
+
+
+<div class="presented-code">
 if cell_is_alive
-  # ...
-```
+  do_this
+else
+  do_some_other_thing
+end
+</div>
 
 
-and make sure the tests pass:
-
-```
+<div class="presented-code">
 $ rake test
 .....
 
 Finished in 0.02343 seconds (files took 0.11584 seconds to load)
 5 examples, 0 failures
-```
+</div>
+
+Note:
+Usually, to accomplish any useful behavior we would like to combine multiple bits of knowledge. So if we want to understand how system works better, we need to focus on groups of pieces of knowledge. This is what Explorative TDD is about:
 
 
 
@@ -526,7 +589,7 @@ I think we should go through a small example...
   <li class="done">Knowledge in Code</li>
   <li class="done">Mutation</li>
   <li class="done">Code <-> Test Relationship</li>
-  <li class="done">Knowledge Test Coverage</li>
+  <li class="done">Most Useful Coverage Metric</li>
   <li class="done">Mutational Testing</li>
   <li class="done">Explorative TDD</li>
   <li class="next">Step-by-step Example</li>

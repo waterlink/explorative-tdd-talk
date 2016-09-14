@@ -7,4 +7,10 @@
   height: 100%;
   border: none;
   box-shadow: none;
+  margin-left: -10%;
+  margin-top: -5%;
+  width: 120%;
+  height: 120%;
+  max-width: 120%;
+  max-height: 120%;
 }

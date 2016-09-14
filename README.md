@@ -11,16 +11,13 @@ Welcome everyone, thank you for having me here.
 
 Software Craftsperson
 
+Software Engineer  
+@ Pivotal Labs
+
 [@waterlink000](https://twitter.com/waterlink000)
 
 Note:
 My name is Oleksii Fedorov. I am a Software Craftsperson and this is my twitter handle.
-
-
-
-<img src="pivotal.png" class="pivotal-logo">
-
-Note:
 I work as a Software Engineer @ Pivotal Labs.
 
 

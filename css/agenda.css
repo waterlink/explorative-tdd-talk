@@ -1,15 +1,15 @@
 li.done {
   font-weight: bold;
-  color: lightgray;
+  color: darkgray;
   list-style: none;
 }
 
 li.done::before {
   content: "\02713";
   position: absolute;
-  margin-left: -40px;
+  margin-left: -60px;
   font-weight: 100;
-  color: green;
+  color: lightgreen;
 }
 
 li.next {
@@ -22,6 +22,6 @@ li.next {
 li.next::before {
   content: "\02192";
   position: absolute;
-  margin-left: -40px;
+  margin-left: -60px;
   font-weight: 100;
 }

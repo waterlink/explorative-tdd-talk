@@ -12,26 +12,29 @@
   font-size: 1.1em;
   margin-top: -3em;
   line-height: 1.3em;
+
+  font-weight: bold;
 }
 
 .reveal .presented-code.presented-code--with-highlights {
-  color: #909090;
+  color: #bbb;
+  font-weight: normal;
 }
 
 .reveal .presented-code.presented-code--with-highlights .presented-code__highlight {
-  color: darkgreen;
+  color: lightgreen;
   font-weight: bold;
 }
 
 .reveal .presented-code.presented-code--with-highlights .presented-code__highlight.alternative {
-  color: darkblue;
+  color: violet;
 }
 
 .reveal .presented-code.presented-code--with-highlights .presented-code__highlight.failure {
-  color: darkred;
+  color: red;
 }
 
 .reveal .presented-code.presented-code--with-highlights .presented-code__highlight.mutant + .presented-code__highlight {
   text-decoration: line-through;
-  color: darkred;
+  color: red;
 }

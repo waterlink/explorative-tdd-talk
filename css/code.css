@@ -25,7 +25,10 @@
 
 .reveal .presented-code.presented-code--with-highlights .presented-code__highlight.alternative {
   color: darkblue;
-  font-weight: bold;
+}
+
+.reveal .presented-code.presented-code--with-highlights .presented-code__highlight.failure {
+  color: darkred;
 }
 
 .reveal .presented-code.presented-code--with-highlights .presented-code__highlight.mutant + .presented-code__highlight {

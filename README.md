@@ -456,12 +456,12 @@ Note:
 Third, we need to make sure there is a test failure:
 
 
-<div class="presented-code">
+<div class="presented-code presented-code--with-highlights">
 $ rake test
-....
+<span class="presented-code__highlight">....</span>
 
 Finished in 0.02343 seconds (files took 0.11584 seconds to load)
-4 examples, 0 failures
+4 examples, <span class="presented-code__highlight">0 failures</span>
 </div>
 
 Note:
@@ -486,12 +486,12 @@ expect(<span class="presented-code__highlight">did_some_other_thing</span>).to e
 </div>
 
 
-<div class="presented-code">
+<div class="presented-code presented-code--with-highlights">
 $ rake test
-....F
+<span class="presented-code__highlight">....</span><span class="presented-code__highlight failure">F</span>
 
 Finished in 0.02343 seconds (files took 0.11584 seconds to load)
-5 examples, 1 failure
+5 examples, <span class="presented-code__highlight failure">1 failure</span>
 </div>
 
 
@@ -522,12 +522,12 @@ end
 </div>
 
 
-<div class="presented-code">
+<div class="presented-code presented-code--with-highlights">
 $ rake test
-.....
+<span class="presented-code__highlight">.....</span>
 
 Finished in 0.02343 seconds (files took 0.11584 seconds to load)
-5 examples, 0 failures
+5 examples, <span class="presented-code__highlight">0 failures</span>
 </div>
 
 Note:
@@ -616,37 +616,133 @@ Means of isolation:
 #### Our scope
 
 
-![original code](original_code.png)
+<div class="presented-code">
+class User
+  def notifications
+    notifications = Database
+      .where("notifications") do |x|
+</div>
 
 
-### Step 1: Duplicate code to different method
+<div class="presented-code">
+      (x[1][0] == "followed_notification" &&
+        x[1][2] == id.to_s) ||
+      (x[1][0] == "favorited_notification" &&
+        StatusUpdate.find(x[1][2].to_i)
+            .owner_id == id) ||
+      (x[1][0] == "replied_notification" &&
+        StatusUpdate.find(x[1][2].to_i)
+            .owner_id == id) ||
+      (x[1][0] == "reposted_notification" &&
+        StatusUpdate.find(x[1][2].to_i)
+            .owner_id == id)
+</div>
 
-```ruby
+
+<div class="presented-code">
+    end.map do |row|
+      id, values = row
+      kind = values[0]
+</div>
+
+
+<div class="presented-code">
+      if kind == "followed_notification"
+        {
+          kind: kind,
+          follower: User.find(values[1].to_i),
+          user: User.find(values[2].to_i),
+        }
+</div>
+
+
+<div class="presented-code">
+      elsif kind == "favorited_notification"
+        {
+          kind: kind,
+          favoriter: User.find(values[1].to_i),
+          status_update: StatusUpdate
+              .find(values[2].to_i),
+        }
+</div>
+
+
+<div class="presented-code">
+      elsif kind == "replied_notification"
+        {
+          kind: kind,
+          sender: User.find(values[1].to_i),
+          status_update: StatusUpdate
+              .find(values[2].to_i),
+          reply: StatusUpdate
+              .find(values[3].to_i),
+        }
+</div>
+
+
+<div class="presented-code">
+      elsif kind == "reposted_notification"
+        {
+          kind: kind,
+          reposter: User.find(values[1].to_i),
+          status_update: StatusUpdate.find(values[2].to_i),
+        }
+      end
+    end
+</div>
+
+
+<div class="presented-code">
+  Analytics.tag({name: "fetch_notifications",
+                count: notifications.count})
+  notifications
+end
+</div>
+
+Note:
+As you might guess, this code is really overwhelming. So, let's start by duplicating the whole method in an isolated method to test it:
+
+
+<div class="presented-code presented-code--with-highlights">
 class User
   def notifications
     notifications = Database
       .where("notifications") do |x|
     ...
   end
+</div>
 
-  # full copy of User#notifications
-  def notifications__isolated__
+
+<div class="presented-code presented-code--with-highlights">
+class User
+  <span class="presented-code__highlight">def notifications
     notifications = Database
       .where("notifications") do |x|
     ...
-  end
-end
-```
+  end</span>
+</div>
 
 
-### Step 2: Read, try to understand and pick knowledge to test
+<div class="presented-code presented-code--with-highlights">
+class User
+  <span class="presented-code__highlight">def notifications ... end</span>
 
-```ruby
-(x[1][0] == "followed_notification" && x[1][2] == id.to_s) ||
+  <span class="presented-code__highlight alternative">def notifications_isolated
+    notifications = Database
+      .where("notifications") do |x|
+    ...
+  end</span>
+</div>
+
+Note:
+Next we need to read the code and try to understand a concrete part of the behavior it has. We need to identify related knowledge for this behavior as a whole:
+
+
+<div class="presented-code presented-code--with-highlights">
 ...
-```
-
-```ruby
+<span class="presented-code__highlight">(x[1][0] == "followed_notification" &&
+  x[1][2] == id.to_s)</span> ||
+...
 if kind == "followed_notification"
   {
     kind: kind,
@@ -654,43 +750,143 @@ if kind == "followed_notification"
     user: User.find(values[2].to_i),
   }
 elsif ...
-```
+</div>
 
 
-### Step 3: Write the first test
+<div class="presented-code presented-code--with-highlights">
+...
+<span class="presented-code__highlight">(x[1][0] == <span class="presented-code__highlight alternative">"followed_notification"</span> &&
+  x[1][2] == id.to_s)</span> ||
+...
+if kind == <span class="presented-code__highlight alternative">"followed_notification"</span>
+  {
+    kind: kind,
+    follower: User.find(values[1].to_i),
+    user: User.find(values[2].to_i),
+  }
+elsif ...
+</div>
 
-```ruby
-it "looks like it loads some notifications from the database" do
-  user = User.new(email: "john@example.org", password: "welcome")
-  Database.insert("notifications", [
-    "followed_notification", "986", user.id.to_s]
-  )
 
-  notifications = user.notifications__isolated__
+<div class="presented-code presented-code--with-highlights">
+...
+<span class="presented-code__highlight">(x[1][0] == <span class="presented-code__highlight alternative">"followed_notification"</span> &&
+  x[1][2] == id.to_s)</span> ||
+...
+<span class="presented-code__highlight">if kind == <span class="presented-code__highlight alternative">"followed_notification"</span>
+  {
+    kind: kind,
+    follower: User.find(values[1].to_i),
+    user: User.find(values[2].to_i),
+  }</span>
+elsif ...
+</div>
 
-  expect(notifications.count).to eq(1)
+Note:
+These bits of knowledge indeed look related, so let's try to guess what behavior they are responsible for:
+
+
+<div class="presented-code presented-code--with-highlights">
+it "<span class="presented-code__highlight">can load followed notifications</span>" do
+  # TODO
 end
-```
+</div>
+
+Note:
+Wait. I think we are making to big assumption. There is a smaller assumption that we need to validate here:
 
 
-### Step 4: Make sure test passes
+<div class="presented-code presented-code--with-highlights">
+it "<span class="presented-code__highlight">can load <span class="presented-code__highlight alternative mutant">some</span> <span class="presented-code__highlight">followed</span> notifications</span>" do
+  # TODO
+end
+</div>
 
-```
-.
+
+<div class="presented-code presented-code--with-highlights">
+it "can load some notifications" do
+  <span class="presented-code__highlight"># TODO</span>
+end
+</div>
+
+
+<div class="presented-code presented-code--with-highlights">
+it "can load some notifications" do
+  <span class="presented-code__highlight mutant">user = User.new(email: "john@example.org",
+                  password: "welcome")</span>
+  <span class="presented-code__highlight"># TODO</span>
+end
+</div>
+
+
+<div class="presented-code presented-code--with-highlights">
+it "can load some notifications" do
+  user = User.new(email: "john@example.org",
+                  password: "welcome")
+  <span class="presented-code__highlight">Database.insert("notifications",
+    ["followed_notification", "986",
+      user.id.to_s])</span>
+end
+</div>
+
+
+<div class="presented-code presented-code--with-highlights">
+it "can load some notifications" do
+  user = User.new(email: "john@example.org",
+                  password: "welcome")
+  Database.insert("notifications",
+    ["followed_notification", "986",
+      user.id.to_s])
+  <span class="presented-code__highlight">notifications = user.notifications_isolated</span>
+end
+</div>
+
+
+<div class="presented-code presented-code--with-highlights">
+it "can load some notifications" do
+  user = User.new(email: "john@example.org",
+                  password: "welcome")
+  Database.insert("notifications",
+    ["followed_notification", "986",
+      user.id.to_s])
+  notifications = user.notifications_isolated
+  expect(<span class="presented-code__highlight">notifications.count</span>).to eq(1)
+end
+</div>
+
+
+<div class="presented-code presented-code--with-highlights">
+it "can load some notifications" do
+  user = User.new(email: "john@example.org",
+                  password: "welcome")
+  Database.insert("notifications",
+    ["followed_notification", "986",
+      user.id.to_s])
+  notifications = user.notifications_isolated
+  expect(<span class="presented-code__highlight">notifications.count</span>).to eq(<span class="presented-code__highlight alternative">1</span>)
+end
+</div>
+
+Note:
+Next step is to make sure that this test passes:
+
+
+<div class="presented-code presented-code--with-highlights">
+$ rake test
+<span class="presented-code__highlight">.</span>
 
 Finished in 0.02343 seconds (files took 0.11584 seconds to load)
-1 example, 0 failures
-```
+1 example, <span class="presented-code__highlight">0 failures</span>
+</div>
+
+Note:
+Now we need to apply mutational testing repeatedly to these bits of knowledge until we are confident that it is well-tested. For example:
 
 
-### Step 5: Apply Mutational Testing repeatedly
-
-```ruby
-(x[1][0] == "followed_notification" && x[1][2] == id.to_s) ||
+<div class="presented-code">
+(x[1][0] == "followed_notification" &&
+  x[1][2] == id.to_s) ||
 ...
-```
-
-```ruby
 if kind == "followed_notification"
   {
     kind: kind,
@@ -698,52 +894,132 @@ if kind == "followed_notification"
     user: User.find(values[2].to_i),
   }
 elsif ...
-```
+</div>
+
+Note:
+Let's take a closer look at this boolean condition:
 
 
-Break first granular piece of knowledge:
-
-```ruby
-# (x[1][0] == "followed_notification" && x[1][2] == id.to_s) ||
+<div class="presented-code presented-code--with-highlights">
+<span class="presented-code__highlight">(x[1][0] == "followed_notification" &&
+  x[1][2] == id.to_s)</span> ||
 ...
-```
+if kind == "followed_notification"
+  {
+    kind: kind,
+    follower: User.find(values[1].to_i),
+    user: User.find(values[2].to_i),
+  }
+elsif ...
+</div>
+
+Note:
+For example, We could remove it:
 
 
-And run tests:
+<div class="presented-code presented-code--with-highlights">
+<span class="presented-code__highlight mutant"></span><span class="presented-code__highlight">(x[1][0] == "followed_notification" &&
+  x[1][2] == id.to_s) ||</span>
+...
+if kind == "followed_notification"
+  {
+    kind: kind,
+    follower: User.find(values[1].to_i),
+    user: User.find(values[2].to_i),
+  }
+elsif ...
+</div>
 
-```
-F
 
-Failures:
+<div class="presented-code presented-code--with-highlights">
+$ rake test
+<span class="presented-code__highlight failure">F</span>
 
+Finished in 0.03511 seconds (files took 0.11877 seconds to load)
+1 example, <span class="presented-code__highlight failure">1 failure</span>
+</div>
+
+Note:
+So it fails, great! Let's take a detailed look at the failure itself:
+
+
+<div class="presented-code presented-code--with-highlights">
   1) User#notifications looks like it loads some notifications from the database
-     Failure/Error: expect(notifications.count).to eq(1)
+     Failure/Error: <span class="presented-code__highlight failure">expect(notifications.count).to eq(1)</span>
 
        expected: 1
             got: 0
 
        (compared using ==)
-     # ./lemon_spec.rb:63:in `block (3 levels) in <top (required)>'
-
-Finished in 0.03511 seconds (files took 0.11877 seconds to load)
-1 example, 1 failure
-```
+     # ./lemon_spec.rb:63
+</div>
 
 
-Great. This mutation says, that our tests are good to go. Other options:
+<div class="presented-code presented-code--with-highlights">
+  1) User#notifications looks like it loads some notifications from the database
+     Failure/Error: <span class="presented-code__highlight failure">expect(notifications.count).to eq(1)</span>
 
-- replace condition with `false`
-- replace condition with `true`
+       <span class="presented-code__highlight">expected: 1</span>
+            got: 0
+
+       (compared using ==)
+     # ./lemon_spec.rb:63
+</div>
 
 
+<div class="presented-code presented-code--with-highlights">
+  1) User#notifications looks like it loads some notifications from the database
+     Failure/Error: <span class="presented-code__highlight failure">expect(notifications.count).to eq(1)</span>
+
+       <span class="presented-code__highlight">expected: 1</span>
+            <span class="presented-code__highlight failure">got: 0</span>
+
+       (compared using ==)
+     # ./lemon_spec.rb:63
+</div>
+
+Note:
+This mutant is not surviving, which means that our test is good. Or is it? Let's see what other mutations we can introduce for this bit of knowledge:
+
+
+<div class="presented-code presented-code--with-highlights">
+<span class="presented-code__highlight mutant">false</span> <span class="presented-code__highlight">(x[1][0] == "followed_notification" &&
+  x[1][2] == id.to_s)</span> ||
+...
+if kind == "followed_notification"
+  {
+    kind: kind,
+    follower: User.find(values[1].to_i),
+    user: User.find(values[2].to_i),
+  }
+elsif ...
+</div>
+
+
+<div class="presented-code presented-code--with-highlights">
+<span class="presented-code__highlight mutant">true</span> <span class="presented-code__highlight">(x[1][0] == "followed_notification" &&
+  x[1][2] == id.to_s)</span> ||
+...
+if kind == "followed_notification"
+  {
+    kind: kind,
+    follower: User.find(values[1].to_i),
+    user: User.find(values[2].to_i),
+  }
+elsif ...
+</div>
+
+Note:
 Replacing condition with `true` results in:
 
-```
-.
+
+<div class="presented-code presented-code--with-highlights">
+$ rake test
+<span class="presented-code__highlight">.</span>
 
 Finished in 0.02343 seconds (files took 0.11584 seconds to load)
-1 example, 0 failures
-```
+1 example, <span class="presented-code__highlight">0 failures</span>
+</div>
 
 
 Now we have to either:
@@ -752,132 +1028,341 @@ Now we have to either:
 - change our test to cover that, or
 - add more tests.
 
+Note:
+In this case, adding another test does the job:
 
-Adding another test does the job:
 
-```ruby
-it "ignores records of an invalid kind" do
-  user = User.new(email: "john@example.org", password: "welcome")
-  Database.insert("notifications", [
-    "invalid", "986", user.id.to_s
-  ])
-
-  notifications = user.notifications__isolated__
-
-  expect(notifications.count).to eq(0)
+<div class="presented-code presented-code--with-highlights">
+it "<span class="presented-code__highlight">ignores records of an invalid kind</span>" do
 end
-```
+</div>
 
 
-```
-.F
+<div class="presented-code presented-code--with-highlights">
+it "ignores records of an invalid kind" do
+  <span class="presented-code__highlight">user = User.new(email: "john@example.org",
+                  password: "welcome")</span>
+end
+</div>
 
-Failures:
 
+<div class="presented-code presented-code--with-highlights">
+it "ignores records of an invalid kind" do
+  user = User.new(email: "john@example.org",
+                  password: "welcome")
+  <span class="presented-code__highlight">Database.insert("notifications",
+    ["invalid", "986", user.id.to_s])</span>
+end
+</div>
+
+
+<div class="presented-code presented-code--with-highlights">
+it "ignores records of an invalid kind" do
+  user = User.new(email: "john@example.org",
+                  password: "welcome")
+  Database.insert("notifications",
+    ["invalid", "986", user.id.to_s])
+  <span class="presented-code__highlight">notifications = user.notifications_isolated</span>
+end
+</div>
+
+
+<div class="presented-code presented-code--with-highlights">
+it "ignores records of an invalid kind" do
+  user = User.new(email: "john@example.org",
+                  password: "welcome")
+  Database.insert("notifications",
+    ["invalid", "986", user.id.to_s])
+  notifications = user.notifications_isolated
+  expect(<span class="presented-code__highlight">notifications.count</span>).to eq(0)
+end
+</div>
+
+
+<div class="presented-code presented-code--with-highlights">
+it "ignores records of an invalid kind" do
+  user = User.new(email: "john@example.org",
+                  password: "welcome")
+  Database.insert("notifications",
+    ["invalid", "986", user.id.to_s])
+  notifications = user.notifications_isolated
+  expect(<span class="presented-code__highlight">notifications.count</span>).to eq(<span class="presented-code__highlight alternative">0</span>)
+end
+</div>
+
+
+<div class="presented-code presented-code--with-highlights">
+$ rake test
+<span class="presented-code__highlight">.</span><span class="presented-code__highlight failure">F</span>
+
+Finished in 0.21531 seconds (files took 0.11582 seconds to load)
+2 examples, <span class="presented-code__highlight failure">1 failure</span>
+</div>
+
+
+<div class="presented-code presented-code--with-highlights">
   1) User#notifications ignores records of invalid kind
-     Failure/Error: expect(notifications.count).to eq(0)
+     Failure/Error: <span class="presented-code__highlight failure">expect(notifications.count).to eq(0)</span>
 
        expected: 0
             got: 1
 
        (compared using ==)
-     # ./lemon_spec.rb:131:in `block (3 levels) in <top (required)>'
-
-Finished in 0.21531 seconds (files took 0.11582 seconds to load)
-2 examples, 1 failure
-```
+     # ./lemon_spec.rb:131
+</div>
 
 
-Undo the mutation:
+<div class="presented-code presented-code--with-highlights">
+  1) User#notifications ignores records of invalid kind
+     Failure/Error: <span class="presented-code__highlight failure">expect(notifications.count).to eq(0)</span>
 
-```ruby
-(x[1][0] == "followed_notification" && x[1][2] == id.to_s) ||
+       <span class="presented-code__highlight">expected: 0</span>
+            got: 1
+
+       (compared using ==)
+     # ./lemon_spec.rb:131
+</div>
+
+
+<div class="presented-code presented-code--with-highlights">
+  1) User#notifications ignores records of invalid kind
+     Failure/Error: <span class="presented-code__highlight failure">expect(notifications.count).to eq(0)</span>
+
+       <span class="presented-code__highlight">expected: 0</span>
+            <span class="presented-code__highlight failure">got: 1</span>
+
+       (compared using ==)
+     # ./lemon_spec.rb:131
+</div>
+
+Note:
+Great, it means that this mutation is covered by our tests too. It is important to undo the mutation and see all tests pass:
+
+
+<div class="presented-code presented-code--with-highlights">
+<span class="presented-code__highlight mutant">(x[1][0] == "followed_notification" &&
+  x[1][2] == id.to_s)</span> <span class="presented-code__highlight">true</span> ||
 ...
-```
+if kind == "followed_notification"
+  {
+    kind: kind,
+    follower: User.find(values[1].to_i),
+    user: User.find(values[2].to_i),
+  }
+elsif ...
+</div>
 
-and run tests:
 
-```
-..
+<div class="presented-code presented-code--with-highlights">
+<span class="presented-code__highlight">..</span>
 
 Finished in 0.02343 seconds (files took 0.11584 seconds to load)
-2 examples, 0 failures
-```
+2 examples, <span class="presented-code__highlight">0 failures</span>
+</div>
 
 
 ### Apply Mutational Testing repeatedly
 
 
-```ruby
+<div class="presented-code presented-code--with-highlights">
 ...
-kind = values[0]
+<span class="presented-code__highlight">kind = values[0]</span>
+if kind == "followed_notification"
+  {
+    kind: kind,
+    follower: User.find(values[1].to_i),
+    user: User.find(values[2].to_i),
+  }
+elsif ...
+</div>
+
+
+<div class="presented-code presented-code--with-highlights">
 ...
-```
+kind = <span class="presented-code__highlight mutant">values[1]</span> <span class="presented-code__highlight">values[0]</span>
+if kind == "followed_notification"
+  {
+    kind: kind,
+    follower: User.find(values[1].to_i),
+    user: User.find(values[2].to_i),
+  }
+elsif ...
+</div>
 
-change to
 
-```ruby
+<div class="presented-code presented-code--with-highlights">
 ...
-kind = values[1]
-...
-```
+<span class="presented-code__highlight alternative">kind</span> = <span class="presented-code__highlight mutant">values[1]</span> <span class="presented-code__highlight">values[0]</span>
+if <span class="presented-code__highlight alternative">kind</span> == "followed_notification"
+  {
+    kind: <span class="presented-code__highlight alternative">kind</span>,
+    follower: User.find(values[1].to_i),
+    user: User.find(values[2].to_i),
+  }
+elsif ...
+</div>
 
 
-And run tests:
-
-```
-..
+<div class="presented-code presented-code--with-highlights">
+$ rake test
+<span class="presented-code__highlight">..</span>
 
 Finished in 0.02343 seconds (files took 0.11584 seconds to load)
-2 examples, 0 failures
-```
+2 examples, <span class="presented-code__highlight">0 failures</span>
+</div>
+
+Note:
+It seems we need another test:
 
 
-Another non-failing mutation, let's add test:
-
-```ruby
-it "loads followed notifications with a correct kind" do
-  user = User.new(email: "john@example.org", password: "welcome")
-  Database.insert("notifications", [
-    "followed_notification", "986", user.id.to_s
-  ])
-
-  notifications = user.notifications__isolated__
-
-  expect(notifications[0][:kind]).to eq("followed_notification")
+<div class="presented-code presented-code--with-highlights">
+it "<span class="presented-code__highlight">loads notifications with a correct kind</span>" do
 end
-```
+</div>
 
 
-And run tests:
+<div class="presented-code presented-code--with-highlights">
+it "loads notifications with a correct kind" do
+  <span class="presented-code__highlight">user = User.new(email: "john@example.org",
+                  password: "welcome")
+  Database.insert("notifications",
+    ["followed_notification", "986",
+      user.id.to_s])</span>
+end
+</div>
 
-```
-..F
 
-Failures:
+<div class="presented-code presented-code--with-highlights">
+it "loads notifications with a correct kind" do
+  user = User.new(email: "john@example.org",
+                  password: "welcome")
+  Database.insert("notifications",
+    ["followed_notification", "986",
+      user.id.to_s])
+  <span class="presented-code__highlight">notifications = user.notifications_isolated</span>
+  expect(<span class="presented-code__highlight">notifications[0][:kind]</span>)
+    .to eq("followed_notification")
+end
+</div>
 
-  1) User#notifications loads followed notifications with correct kind
-     Failure/Error: expect(notifications[0][:kind]).to eq("followed_notification")
 
-     NoMethodError:
-       undefined method `[]' for nil:NilClass
-     # ./lemon_spec.rb:72:in `block (3 levels) in <top (required)>'
+<div class="presented-code presented-code--with-highlights">
+it "loads notifications with a correct kind" do
+  user = User.new(email: "john@example.org",
+                  password: "welcome")
+  Database.insert("notifications",
+    ["followed_notification", "986",
+      user.id.to_s])
+  notifications = user.notifications_isolated
+  expect(<span class="presented-code__highlight">notifications[0][:kind]</span>)
+    .to eq(<span class="presented-code__highlight alternative">"followed_notification"</span>)
+end
+</div>
+
+
+<div class="presented-code presented-code--with-highlights">
+<span class="presented-code__highlight">..</span><span class="presented-code__highlight failure">F</span>
 
 Finished in 0.14636 seconds (files took 0.12127 seconds to load)
-3 examples, 1 failure
-```
-
-Which is what we expect!
+3 examples, <span class="presented-code__highlight failure">1 failure</failure>
+</div>
 
 
-Undo mutation and run tests:
+<div class="presented-code presented-code--with-highlights">
+1) User#notifications loads followed notifications with correct kind
+   Failure/Error: <span class="presented-code__highlight failure">expect(notifications[0][:kind]).to eq("followed_notification")</span>
 
-```
+   NoMethodError:
+     undefined method `[]' for nil:NilClass
+   # ./lemon_spec.rb:72
+</div>
+
+
+<div class="presented-code presented-code--with-highlights">
+1) User#notifications loads followed notifications with correct kind
+   Failure/Error: <span class="presented-code__highlight failure">expect(notifications[0][:kind]).to eq("followed_notification")</span>
+
+   <span class="presented-code__highlight failure">NoMethodError:
+     undefined method `[]' for nil:NilClass</span>
+   # ./lemon_spec.rb:72
+</div>
+
+
+<div class="presented-code presented-code--with-highlights">
+1) User#notifications loads followed notifications with correct kind
+   Failure/Error: expect(notifications[0][:kind]).to eq("followed_notification")
+
+   NoMethodError:
+     undefined method `[]' for nil:NilClass
+   # <span class="presented-code__highlight">./lemon_spec.rb:72</span>
+</div>
+
+Note:
+And this failure is pointing to the code in the test:
+
+
+<div class="presented-code presented-code--with-highlights">
+# <span class="presented-code__highlight">./lemon_spec.rb:72</span>
+notifications[0][:kind]
+</div>
+
+
+<div class="presented-code presented-code--with-highlights">
+# ./lemon_spec.rb:72
+<span class="presented-code__highlight">notifications[0]</span>[:kind]
+<span class="presented-code__highlight alternative">^      nil     ^</span>[:kind]
+</div>
+
+
+<div class="presented-code presented-code--with-highlights">
+# ./lemon_spec.rb:72
+notifications[0]<span class="presented-code__highlight">[:kind]</span>
+^      nil     ^<span class="presented-code__highlight alternative">[:kind]</span>
+</div>
+
+
+<div class="presented-code presented-code--with-highlights">
+# ./lemon_spec.rb:72
+notifications[0]<span class="presented-code__highlight">[:kind]</span>
+^      nil     ^<span class="presented-code__highlight alternative">[:kind]</span> => <span class="presented-code__highlight failure">NoMethodError</span>
+</div>
+
+Note:
+We made slightly wrong assumption about what will happen after the mutation and the failing test has proven us wrong. We had to investigate what really has happened and therefore we have deepened our understanding of this knowledge in the code.
+
+
+<div class="presented-code presented-code--with-highlights">
 ...
+kind = <span class="presented-code__highlight">values[1]</span>
+if kind == "followed_notification"
+  {
+    kind: kind,
+    follower: User.find(values[1].to_i),
+    user: User.find(values[2].to_i),
+  }
+elsif ...
+</div>
+
+
+<div class="presented-code presented-code--with-highlights">
+...
+kind = <span class="presented-code__highlight mutant">values[0]</span> <span class="presented-code__highlight">values[1]</span>
+if kind == "followed_notification"
+  {
+    kind: kind,
+    follower: User.find(values[1].to_i),
+    user: User.find(values[2].to_i),
+  }
+elsif ...
+</div>
+
+
+<div class="presented-code presented-code--with-highlights">
+<span class="presented-code__highlight">...</span>
 
 Finished in 0.14636 seconds (files took 0.12127 seconds to load)
-3 examples, 0 failures
-```
+3 examples, <span class="presented-code__highlight">0 failures</span>
+</div>
 
 
 ### Continue applying mutational testing
@@ -886,6 +1371,10 @@ Finished in 0.14636 seconds (files took 0.12127 seconds to load)
 
 
 ### Go back to step 2 and repeat
+
+Choose new group of bits of knowledge responsible for other behaviors of the code.
+
+And repeat.
 
 (until there is enough confidence)
 

@@ -1,0 +1,12 @@
+li {
+  line-height: 1.5em !important;
+  margin-left: 100px !important;
+}
+
+.reveal .slide-number {
+  font-size: 30px;
+  top: 10px;
+  color: lightgreen;
+  font-weight: bold;
+  opacity: 0.75;
+}

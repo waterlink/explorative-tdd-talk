@@ -1,0 +1,27 @@
+li.done {
+  font-weight: bold;
+  color: darkgray;
+  list-style: none;
+}
+
+li.done::before {
+  content: "\02713";
+  position: absolute;
+  margin-left: -60px;
+  font-weight: 100;
+  color: lightgreen;
+}
+
+li.next {
+  font-weight: bold;
+  list-style: none;
+  margin-left: 35px !important;
+  line-height: 2em !important;
+}
+
+li.next::before {
+  content: "\02192";
+  position: absolute;
+  margin-left: -60px;
+  font-weight: 100;
+}

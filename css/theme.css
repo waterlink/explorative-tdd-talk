@@ -1,0 +1,8 @@
+@import "../../my-presentation-template/css/reveal.css";
+@import "./inverted-theme.css";
+
+/* code theme */
+@import "../../my-presentation-template/lib/css/solarized-light.css";
+
+@import "../../my-presentation-template/brand.css";
+@import "../../my-presentation-template/slide-number.css";
